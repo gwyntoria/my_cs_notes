@@ -12,7 +12,15 @@
 
 ## Migration
 
-`Scripts` 目录和 `Config/statusline.sh` 的内容将迁移到 [gwyntoria/skills 的 scripts 目录](https://github.com/gwyntoria/skills/tree/main/scripts)，此仓库中不再更新。
+`Scripts` 目录和 `Config/statusline.sh` 已迁移到 [gwyntoria/skills 的 scripts 目录](https://github.com/gwyntoria/skills/tree/main/scripts)，本仓库不再保留副本。
+
+| 原路径 | 现位置 |
+| --- | --- |
+| `Scripts/wsl_setup.sh` | [`scripts/wsl_setup.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/wsl_setup.sh) |
+| `Scripts/wsl_uninstall.sh` | 并入 [`scripts/wsl_setup.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/wsl_setup.sh) 的 `--uninstall` |
+| `Scripts/toria-up.sh` | [`scripts/toria-up.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/toria-up.sh) |
+| `Scripts/config_agent.sh` | [`scripts/config_agent.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/config_agent.sh) |
+| `Config/statusline.sh` | [`scripts/statusline.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/statusline.sh) |
 
 ## Formatting
 
