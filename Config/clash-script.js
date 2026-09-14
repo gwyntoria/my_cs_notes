@@ -145,7 +145,7 @@ const usProxyNameRule = {
   codes: ["US", "USA"],
 };
 
-const usRuleProviderNames = ["TikTok", "PayPal", "Gemini"];
+const usRuleProviderNames = ["TikTok", "PayPal", "Gemini", "anthropic"];
 const rejectRuleProviderNames = ["AD"];
 
 // 需要强制直连的规则放在这里，避免国内服务、办公软件和支付场景误走代理。
