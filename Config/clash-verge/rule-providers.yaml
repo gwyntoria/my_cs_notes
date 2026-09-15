@@ -23,7 +23,7 @@ rule-providers:
   Anthropic:
       type: http
       behavior: classical
-      url: https://raw.githubusercontent.com/xiaolai/anthropic-claude-surge-rules-set/main/dist/anthropic-clash.yaml
+      url: "https://raw.githubusercontent.com/xiaolai/anthropic-claude-surge-rules-set/main/dist/anthropic-clash.yaml"
       path: ./rules/anthropic.yaml
       interval: 86400
 
