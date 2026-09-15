@@ -5,8 +5,7 @@
  *
  * - profilePolicyMap：profile 名称到代理组名称的精确映射。
  * - proxyPolicyCandidates：映射未命中时使用的代理组候选名称，越靠前越优先。
- * - proxyRegionOrder：订阅节点的地区排序，越靠前优先级越高；keywords 使用区分大小写的子串匹配，未命中的节点排在末尾，同一地区保持订阅原顺序。
- * - includedProxyNameRules：订阅节点白名单；keywords 使用不区分大小写的子串匹配，codes 只匹配两侧不紧邻英文字母的地区代码。空数组表示关闭白名单筛选。
+ * - proxyRegions：订阅节点的地区定义，越靠前排序优先级越高；included 表示该地区进入白名单。keywords 使用不区分大小写的子串匹配，codes 只匹配两侧不紧邻英文字母的地区代码。全部地区的 included 均为 false 时关闭白名单筛选。
  * - excludedProxyNameRules：订阅节点黑名单，匹配方式同上；在白名单之后执行，命中后一定移除。空数组表示不排除任何节点。
  * - usProxyGroup：美国节点专用代理组；url 是延迟检测地址，interval 是检测间隔秒数。
  * - usRuleProviderNames：强制使用美国节点组的 rule-provider 名称，必须与合并配置中的名称完全一致。
@@ -41,65 +40,49 @@ const proxyPolicyCandidates = [
   "手动切换",
 ];
 
-// proxy group 中订阅节点优先顺序。命中这些地区的节点会排在前面，同一地区内保持原订阅顺序。
-const proxyRegionOrder = [
+// 节点只归入第一个命中的地区；数组顺序同时决定 proxy group 中的地区优先级。
+const proxyRegions = [
   {
-    name: "香港",
-    keywords: ["香港", "香港", "Hong Kong", "HK", "🇭🇰"],
-  },
-  {
-    name: "日本",
-    keywords: ["日本", "Japan", "JP", "Tokyo", "Osaka", "🇯🇵"],
-  },
-  {
-    name: "韩国",
-    keywords: ["韩国", "韓國", "South Korea", "Korea", "KR", "Seoul", "🇰🇷"],
-  },
-  {
-    name: "美国",
-    keywords: ["美国", "美國", "United States", "USA", "US", "America", "🇺🇸"],
-  },
-  {
-    name: "台湾",
-    keywords: ["台湾", "台灣", "Taiwan", "TW"],
-  },
-  {
-    name: "新加坡",
-    keywords: ["新加坡", "Singapore", "SG", "🇸🇬"],
-  },
-];
-
-// 只保留命中这些规则的订阅节点。空数组表示关闭 include 筛选。
-const includedProxyNameRules = [
-  {
-    name: "香港",
-    keywords: ["香港", "Hong Kong", "🇭🇰"],
-    codes: ["HK"],
-  },
-  {
-    name: "美国",
-    keywords: ["美国", "美國", "United States", "America", "🇺🇸"],
-    codes: ["US", "USA"],
-  },
-  {
+    id: "JP",
     name: "日本",
     keywords: ["日本", "Japan", "Tokyo", "Osaka", "🇯🇵"],
     codes: ["JP"],
+    included: true,
   },
   {
+    id: "KR",
     name: "韩国",
     keywords: ["韩国", "韓國", "South Korea", "Korea", "Seoul", "🇰🇷"],
     codes: ["KR"],
+    included: true,
   },
   {
-    name: "新加坡",
-    keywords: ["新加坡", "Singapore", "🇸🇬"],
-    codes: ["SG"],
+    id: "US",
+    name: "美国",
+    keywords: ["美国", "美國", "United States", "America", "🇺🇸"],
+    codes: ["US", "USA"],
+    included: true,
   },
   {
+    id: "HK",
+    name: "香港",
+    keywords: ["香港", "Hong Kong", "🇭🇰"],
+    codes: ["HK"],
+    included: true,
+  },
+  {
+    id: "TW",
     name: "台湾",
     keywords: ["台湾", "台灣", "Taiwan"],
     codes: ["TW"],
+    included: true,
+  },
+  {
+    id: "SG",
+    name: "新加坡",
+    keywords: ["新加坡", "Singapore", "🇸🇬"],
+    codes: ["SG"],
+    included: true,
   },
 ];
 
@@ -138,14 +121,7 @@ const openAiProxyGroup = {
   type: "select",
 };
 
-// 只保留命中这些规则的订阅节点。空数组表示关闭 include 筛选。
-const usProxyNameRule = {
-  name: "美国",
-  keywords: ["美国", "美國", "United States", "America", "🇺🇸"],
-  codes: ["US", "USA"],
-};
-
-const usRuleProviderNames = ["TikTok", "PayPal", "Gemini", "anthropic"];
+const usRuleProviderNames = ["TikTok", "PayPal", "Gemini", "Anthropic"];
 const rejectRuleProviderNames = ["AD"];
 
 // 需要强制直连的规则放在这里，避免国内服务、办公软件和支付场景误走代理。
@@ -352,18 +328,10 @@ function getProxyName(proxy) {
 }
 
 function getProxyRegionRank(proxyName) {
-  for (let index = 0; index < proxyRegionOrder.length; index += 1) {
-    const region = proxyRegionOrder[index];
-    const matched = region.keywords.some((keyword) =>
-      proxyName.includes(keyword),
-    );
+  const region = getProxyRegion(proxyName);
+  if (region) return proxyRegions.indexOf(region);
 
-    if (matched) {
-      return index;
-    }
-  }
-
-  return proxyRegionOrder.length;
+  return proxyRegions.length;
 }
 
 function hasProxyCode(proxyName, code) {
@@ -399,15 +367,24 @@ function matchesProxyNameRule(proxyName, rule) {
   return matchesKeyword || codes.some((code) => hasProxyCode(proxyName, code));
 }
 
+function getProxyRegion(proxyName) {
+  if (typeof proxyName !== "string") return null;
+
+  return (
+    proxyRegions.find((region) => matchesProxyNameRule(proxyName, region)) ||
+    null
+  );
+}
+
 function shouldIncludeProxyName(proxyName) {
   if (typeof proxyName !== "string") return false;
 
   // 未配置 include 规则时不限制节点，便于仅使用 exclude 规则。
-  if (includedProxyNameRules.length === 0) return true;
+  if (!proxyRegions.some((region) => region.included)) return true;
 
-  return includedProxyNameRules.some((rule) => {
-    return matchesProxyNameRule(proxyName, rule);
-  });
+  const region = getProxyRegion(proxyName);
+
+  return Boolean(region && region.included);
 }
 
 function shouldExcludeProxyName(proxyName) {
@@ -424,7 +401,11 @@ function ensureUsProxyGroup(config) {
   const usProxyNames = config.proxies
     .map(getProxyName)
     .filter(Boolean)
-    .filter((proxyName) => matchesProxyNameRule(proxyName, usProxyNameRule))
+    .filter((proxyName) => {
+      const region = getProxyRegion(proxyName);
+
+      return region && region.id === "US";
+    })
     .filter((proxyName) => !shouldExcludeProxyName(proxyName));
 
   const groups = getProxyGroups(config);
@@ -552,7 +533,7 @@ function filterAndSortProxyGroupProxies(config) {
         rank:
           typeof proxyName === "string"
             ? getProxyRegionRank(proxyName)
-            : proxyRegionOrder.length,
+            : proxyRegions.length,
       }))
       .filter((item) => proxyNames.has(item.proxyName))
       .sort(compareProxyRegion)

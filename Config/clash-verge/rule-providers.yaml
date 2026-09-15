@@ -20,7 +20,7 @@ rule-providers:
     path: ./rules/Openai.yaml
     interval: 86400
     
-  anthropic:
+  Anthropic:
       type: http
       behavior: classical
       url: https://raw.githubusercontent.com/xiaolai/anthropic-claude-surge-rules-set/main/dist/anthropic-clash.yaml
