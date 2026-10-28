@@ -21,14 +21,3 @@
 | `Scripts/toria-up.sh` | [`scripts/toria-up.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/toria-up.sh) |
 | `Scripts/config_agent.sh` | [`scripts/config_agent.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/config_agent.sh) |
 | `Config/statusline.sh` | [`scripts/statusline.sh`](https://github.com/gwyntoria/skills/blob/main/scripts/statusline.sh) |
-
-## Formatting
-
-本仓库使用 `markdownlint-cli2` 和 `textlint` 检查 Markdown 格式、中文排版与技术术语。安装依赖后，对修改过的文件执行：
-
-```bash
-npx markdownlint-cli2 --fix --no-globs path/to/file.md
-npx textlint --fix path/to/file.md
-```
-
-详细规则见 [Markdown 格式化指南](Manual/markdown格式化指南.md)。
