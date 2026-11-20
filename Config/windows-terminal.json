@@ -26,32 +26,32 @@
   "initialRows": 45,
   "keybindings": [
     {
-      "id": null,
-      "keys": "ctrl+shift+k"
-    },
-    {
-      "id": null,
-      "keys": "ctrl+shift+tab"
+      "id": "Terminal.ClosePane",
+      "keys": "alt+w"
     },
     {
       "id": "Terminal.CopyToClipboard",
       "keys": "ctrl+c"
     },
     {
-      "id": "Terminal.ClosePane",
-      "keys": "alt+w"
+      "id": null,
+      "keys": "ctrl+shift+tab"
     },
     {
-      "id": "Terminal.PasteFromClipboard",
-      "keys": "ctrl+v"
+      "id": null,
+      "keys": "ctrl+shift+k"
+    },
+    {
+      "id": null,
+      "keys": "ctrl+shift+w"
     },
     {
       "id": null,
       "keys": "ctrl+shift+f"
     },
     {
-      "id": null,
-      "keys": "ctrl+shift+w"
+      "id": "Terminal.PasteFromClipboard",
+      "keys": "ctrl+v"
     },
     {
       "id": "Terminal.DuplicatePaneAuto",
@@ -86,16 +86,8 @@
       "keys": "alt+left"
     },
     {
-      "id": "Terminal.MoveFocusLeft",
-      "keys": "ctrl+pgup"
-    },
-    {
       "id": null,
       "keys": "alt+right"
-    },
-    {
-      "id": "Terminal.MoveFocusRight",
-      "keys": "ctrl+pgdn"
     },
     {
       "id": null,
@@ -104,6 +96,22 @@
     {
       "id": "Terminal.ClearBuffer",
       "keys": "ctrl+shift+l"
+    },
+    {
+      "id": "Terminal.MoveFocusLeft",
+      "keys": "alt+pgup"
+    },
+    {
+      "id": "Terminal.MoveFocusRight",
+      "keys": "alt+pgdn"
+    },
+    {
+      "id": "Terminal.MoveFocusDown",
+      "keys": "ctrl+pgdn"
+    },
+    {
+      "id": "Terminal.MoveFocusUp",
+      "keys": "ctrl+pgup"
     }
   ],
   "language": "en-US",
